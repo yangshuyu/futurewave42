@@ -13,3 +13,10 @@ class BooksResource(BaseResource):
         data = BookSchema(many=True).dump(books).data
         return self.paginate(
             data, total, args.get('page', 1), args.get('per_page', 10))
+
+
+class BookResource(BaseResource):
+    def get(self, book_id):
+        book = Book.find_by_id(book_id)
+        data = BookSchema().dump(book).data
+        return data

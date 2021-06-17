@@ -5,7 +5,7 @@ from flask import Blueprint
 from futurewave42.account.api import LoginResource, LogoutResource, SignupResource, Callback
 from futurewave42.api import CustomApi
 from futurewave42.book.admin import AdminBooksResource, AdminBookResource, AdminFileResource
-from futurewave42.book.api import BooksResource
+from futurewave42.book.api import BooksResource, BookResource
 from futurewave42.configuration.admin import AdminLastConfigurationResource, AdminConfigurationResource
 from futurewave42.configuration.api import LastConfigurationResource
 
@@ -23,6 +23,7 @@ api_v1.add_resource(LogoutResource, '/logout')
 api_v1.add_resource(Callback, '/callback')
 
 api_v1.add_resource(BooksResource, '/books')
+api_v1.add_resource(BookResource, '/books/<book_id>')
 
 api_v1.add_resource(AdminBooksResource, '/admin/books')
 api_v1.add_resource(AdminBookResource, '/admin/books/<book_id>')
