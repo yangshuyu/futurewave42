@@ -20,10 +20,12 @@ class LoginResource(BaseResource):
     @use_args(UserSchema())
     def post(self, args):
         email, password = args.get("email"), args.get("password")
-        u = User.get_user_by_email(email=email, password=password)
 
+        if not email or not password:
+            dynamic_error({}, code=422, message='请输入正确的用户名或密码')
+        u = User.get_user_by_email(email=email, password=password)
         if not u:
-            dynamic_error({}, code=422, message='无此用户')
+            dynamic_error({}, code=422, message='用户或密码错误')
         data = UserSchema().dump(u).data
         data["access_token"] = OAuth().create_token(u)
         return data

@@ -13,7 +13,7 @@ class User(BaseModel):
     name = db.Column(db.String(255), index=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     phone = db.Column(db.String(255), index=True, unique=True)
-    password_hash = db.Column(db.String(256))
+    password = db.Column(db.String(256))
     active = db.Column(db.Boolean(), default=True)
     avatar_url = db.Column(db.String(512), default='imgs/C9372FE1-C7DA-4612-BF36-134F4AD271E0.jpg')
 
@@ -23,21 +23,15 @@ class User(BaseModel):
             name='email_uc'),
     )
 
-    @property
-    def password(self):
-        raise AttributeError('password is not a readable attribute')
-
-    @password.setter
-    def password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
     @classmethod
     def get_user_by_email(cls, **kwargs):
         email = kwargs.get('email')
-        u = cls.query.filter(cls.email == email).first()
+        password = kwargs.get('password')
+        query = cls.query.filter(cls.email == email)
+
+        if password:
+            query = query.filter(cls.password == password)
+        u = query.first()
         return u
 
 
