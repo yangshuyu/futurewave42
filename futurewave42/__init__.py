@@ -8,6 +8,8 @@ from futurewave42.book.admin import AdminBooksResource, AdminBookResource, Admin
 from futurewave42.book.api import BooksResource, BookResource
 from futurewave42.configuration.admin import AdminLastConfigurationResource, AdminConfigurationResource
 from futurewave42.configuration.api import LastConfigurationResource
+from futurewave42.video.admin import AdminVideosResource, AdminVideoResource
+from futurewave42.video.api import VideosResource, VideoResource
 
 '''
     api的url同意注册口
@@ -34,6 +36,12 @@ api_v1.add_resource(LastConfigurationResource, '/last/configuration')
 api_v1.add_resource(AdminLastConfigurationResource, '/admin/last/configuration')
 api_v1.add_resource(AdminConfigurationResource, '/admin/configuration/<configuration_id>')
 
+
+api_v1.add_resource(VideosResource, '/videos')
+api_v1.add_resource(VideoResource, '/videos/<video_id>')
+
+api_v1.add_resource(AdminVideosResource, '/admin/videos')
+api_v1.add_resource(AdminVideoResource, '/admin/videos/<video_id>')
 
 
 BLUEPRINTS = [

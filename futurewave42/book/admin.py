@@ -10,7 +10,7 @@ from libs.base.resource import BaseResource
 
 
 class AdminBooksResource(BaseResource):
-    @jwt_required
+    # @jwt_required
     @use_args(BookSchema)
     def post(self, args):
         book = Book.add(**args)

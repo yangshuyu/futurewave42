@@ -38,6 +38,7 @@ class DevelopmentConfig(Config):
     CACHE_REDIS_DB = '3'
 
     SECRET_KEY = "futurewave"
+    AUDIENCE = "megvii"
 
     # redis
     REDIS_HOST = '127.0.0.1'
