@@ -15,6 +15,7 @@ class BookSchema(BaseSchema):
     images = fields.List(fields.Str(), missing=[])
     context = fields.Str(required=True)
     doc = fields.Str()
+    docs = fields.List(fields.Str(), missing=[])
     cover = fields.Str(dump_only=True)
     detail_images = fields.List(fields.Str(), missing=[], dump_only=True)
 
@@ -31,6 +32,7 @@ class BookPutSchema(BaseSchema):
     images = fields.List(fields.Str(), missing=[])
     context = fields.Str()
     doc = fields.Str()
+    docs = fields.List(fields.Str(), missing=[])
 
     class Meta:
         strict = True
@@ -38,7 +40,15 @@ class BookPutSchema(BaseSchema):
 
 class BookQuerySchema(BaseSchema):
     page = fields.Int(missing=1)
-    per_page = fields.Int(missing=20)
+    per_page = fields.Int(missing=10)
+    q = fields.Str()
+
+    class Meta:
+        strict = True
+
+
+class BookDocsDownloadSchema(BaseSchema):
+    docs = fields.List(fields.Str(), missing=[])
 
     class Meta:
         strict = True

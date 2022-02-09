@@ -1,3 +1,4 @@
+from sqlalchemy import or_
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm.attributes import flag_modified
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -21,6 +22,7 @@ class Book(BaseModel):
     images = db.Column(JSONB, default=[])
     context = db.Column(db.String)
     doc = db.Column(db.String)
+    docs = db.Column(JSONB, default=[])
 
     @property
     def cover(self):
@@ -41,6 +43,10 @@ class Book(BaseModel):
 
             if kwargs.get('images', None):
                 flag_modified(self, 'images')
+
+            if kwargs.get('docs', None):
+                flag_modified(self, 'docs')
+
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -59,6 +65,7 @@ class Book(BaseModel):
             images=kwargs.get('images'),
             context=kwargs.get('context'),
             doc=kwargs.get('doc', None),
+            docs=kwargs.get('docs', []),
         )
         db.session.add(book)
 
@@ -74,7 +81,16 @@ class Book(BaseModel):
     def get_books_by_query(cls, **kwargs):
         page = kwargs.get('page')
         per_page = kwargs.get('per_page')
+        q = kwargs.get('q')
         query = cls.query
+
+        if q:
+            query = query.filter(or_(
+                cls.name.ilike("%{}%".format(q)),
+                cls.author.ilike("%{}%".format(q)),
+                cls.title.ilike("%{}%".format(q))
+
+            ))
 
         total = cls.get_count(query)
 
