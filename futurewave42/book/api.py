@@ -29,7 +29,7 @@ class BookResource(BaseResource):
 
 class BookDocsDownloadResource(BaseResource):
     @use_args(BookDocsDownloadSchema)
-    def get(self, args):
+    def post(self, args):
         docs = args.get('docs', [])
         memory_file = BytesIO()
         print("+++++++++++++++++++++++")
