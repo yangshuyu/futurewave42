@@ -2,6 +2,8 @@ import re
 
 from marshmallow import fields, ValidationError
 
+from futurewave42.author.schema import AuthorSchema
+from futurewave42.tag.schema import TagSchema
 from libs.base.schema import BaseSchema
 
 
@@ -15,6 +17,12 @@ class VideoSchema(BaseSchema):
     doc = fields.Str()
     cover = fields.Str(dump_only=True)
 
+    tag_id = fields.Str()
+    author_id = fields.Str()
+
+    tag = fields.Nested(TagSchema)
+    new_author = fields.Nested(AuthorSchema)
+
     class Meta:
         strict = True
 
@@ -26,6 +34,8 @@ class VideoPutSchema(BaseSchema):
     video = fields.Str()
     context = fields.Str()
     doc = fields.Str()
+    tag_id = fields.Str()
+    author_id = fields.Str()
 
     class Meta:
         strict = True
@@ -34,6 +44,9 @@ class VideoPutSchema(BaseSchema):
 class VideoQuerySchema(BaseSchema):
     page = fields.Int(missing=1)
     per_page = fields.Int(missing=20)
+    tag_id = fields.Str()
+    author_id = fields.Str()
+    q = fields.Str()
 
     class Meta:
         strict = True

@@ -1,3 +1,4 @@
+from sqlalchemy import or_
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm.attributes import flag_modified
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -20,11 +21,27 @@ class Video(BaseModel):
     context = db.Column(db.String)
     doc = db.Column(db.String)
 
+    tag_id = db.Column(UUID)
+    author_id = db.Column(UUID)
+
+    @property
+    def tag(self):
+        from futurewave42.tag.model import Tag
+        return Tag.query.filter(Tag.id == self.tag_id).first()
+
+    @property
+    def new_author(self):
+        from futurewave42.author.model import Author
+        return Author.query.filter(Author.id == self.author_id).first()
+
     @property
     def cover(self):
         return '{}{}'.format(load_config().CDN_DOMAIN, self.image)
 
     def update(self, **kwargs):
+        kwargs.pop("tag")
+        kwargs.pop("new_author")
+
         try:
             for k, v in kwargs.items():
                 if hasattr(self, k):
@@ -45,6 +62,8 @@ class Video(BaseModel):
             video=kwargs.get('video'),
             context=kwargs.get('context'),
             doc=kwargs.get('doc', None),
+            tag_id=kwargs.get('tag_id', None),
+            author_id=kwargs.get('author_id', None)
         )
         db.session.add(video)
 
@@ -61,6 +80,22 @@ class Video(BaseModel):
         page = kwargs.get('page')
         per_page = kwargs.get('per_page')
         query = cls.query
+        q = kwargs.get('q')
+        tag_id = kwargs.get('tag_id')
+        author_id = kwargs.get('author_id')
+
+        if q:
+            query = query.filter(or_(
+                cls.name.ilike("%{}%".format(q)),
+                cls.title.ilike("%{}%".format(q))
+
+            ))
+
+        if tag_id:
+            query = query.filter(cls.tag_id == tag_id)
+
+        if author_id:
+            query = query.filter(cls.author_id == author_id)
 
         total = cls.get_count(query)
 

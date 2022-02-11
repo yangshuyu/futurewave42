@@ -4,10 +4,14 @@ from flask import Blueprint
 
 from futurewave42.account.api import LoginResource, LogoutResource, SignupResource, Callback
 from futurewave42.api import CustomApi
+from futurewave42.author.admin import AdminAuthorsResource, AdminAuthorResource
+from futurewave42.author.api import AuthorsResource
 from futurewave42.book.admin import AdminBooksResource, AdminBookResource, AdminFileResource
 from futurewave42.book.api import BooksResource, BookResource, BookDocsDownloadResource
 from futurewave42.configuration.admin import AdminLastConfigurationResource, AdminConfigurationResource
 from futurewave42.configuration.api import LastConfigurationResource
+from futurewave42.tag.admin import AdminTagsResource, AdminTagResource
+from futurewave42.tag.api import TagsResource
 from futurewave42.video.admin import AdminVideosResource, AdminVideoResource
 from futurewave42.video.api import VideosResource, VideoResource
 
@@ -40,9 +44,18 @@ api_v1.add_resource(AdminConfigurationResource, '/admin/configuration/<configura
 
 api_v1.add_resource(VideosResource, '/videos')
 api_v1.add_resource(VideoResource, '/videos/<video_id>')
-
 api_v1.add_resource(AdminVideosResource, '/admin/videos')
 api_v1.add_resource(AdminVideoResource, '/admin/videos/<video_id>')
+
+
+api_v1.add_resource(AdminTagsResource, '/admin/tags')
+api_v1.add_resource(AdminTagResource, '/admin/tags/<tag_id>')
+api_v1.add_resource(TagsResource, '/tags')
+
+
+api_v1.add_resource(AdminAuthorsResource, '/admin/authors')
+api_v1.add_resource(AdminAuthorResource, '/admin/authors/<author_id>')
+api_v1.add_resource(AuthorsResource, '/authors')
 
 
 BLUEPRINTS = [

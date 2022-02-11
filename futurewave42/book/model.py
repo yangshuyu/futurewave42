@@ -15,7 +15,7 @@ class Book(BaseModel):
     __tablename__ = 'books'
 
     name = db.Column(db.String(512), index=True, nullable=False)
-    author = db.Column(db.String(512), nullable=False)
+    author = db.Column(db.String(512))
     language = db.Column(db.String(1024), nullable=False)
     image = db.Column(db.String, nullable=False)
     title = db.Column(db.String, nullable=False)
@@ -23,6 +23,18 @@ class Book(BaseModel):
     context = db.Column(db.String)
     doc = db.Column(db.String)
     docs = db.Column(JSONB, default=[])
+    tag_id = db.Column(UUID)
+    author_id = db.Column(UUID)
+
+    @property
+    def tag(self):
+        from futurewave42.tag.model import Tag
+        return Tag.query.filter(Tag.id == self.tag_id).first()
+
+    @property
+    def new_author(self):
+        from futurewave42.author.model import Author
+        return Author.query.filter(Author.id == self.author_id).first()
 
     @property
     def cover(self):
@@ -36,6 +48,8 @@ class Book(BaseModel):
         return data
 
     def update(self, **kwargs):
+        kwargs.pop("tag")
+        kwargs.pop("new_author")
         try:
             for k, v in kwargs.items():
                 if hasattr(self, k):
@@ -66,6 +80,8 @@ class Book(BaseModel):
             context=kwargs.get('context'),
             doc=kwargs.get('doc', None),
             docs=kwargs.get('docs', []),
+            tag_id=kwargs.get('tag_id', None),
+            author_id=kwargs.get('author_id', None)
         )
         db.session.add(book)
 
@@ -82,15 +98,23 @@ class Book(BaseModel):
         page = kwargs.get('page')
         per_page = kwargs.get('per_page')
         q = kwargs.get('q')
+        tag_id = kwargs.get('tag_id')
+        author_id = kwargs.get('author_id')
+
         query = cls.query
 
         if q:
             query = query.filter(or_(
                 cls.name.ilike("%{}%".format(q)),
-                cls.author.ilike("%{}%".format(q)),
                 cls.title.ilike("%{}%".format(q))
 
             ))
+
+        if tag_id:
+            query = query.filter(cls.tag_id == tag_id)
+
+        if author_id:
+            query = query.filter(cls.author_id == author_id)
 
         total = cls.get_count(query)
 

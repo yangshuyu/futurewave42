@@ -2,6 +2,8 @@ import re
 
 from marshmallow import fields, ValidationError
 
+from futurewave42.author.schema import AuthorSchema
+from futurewave42.tag.schema import TagSchema
 from libs.base.schema import BaseSchema
 
 
@@ -16,6 +18,12 @@ class BookSchema(BaseSchema):
     context = fields.Str(required=True)
     doc = fields.Str()
     docs = fields.List(fields.Str(), missing=[])
+    tag_id = fields.Str()
+    author_id = fields.Str()
+
+    tag = fields.Nested(TagSchema)
+    new_author = fields.Nested(AuthorSchema)
+
     cover = fields.Str(dump_only=True)
     detail_images = fields.List(fields.Str(), missing=[], dump_only=True)
 
@@ -33,6 +41,8 @@ class BookPutSchema(BaseSchema):
     context = fields.Str()
     doc = fields.Str()
     docs = fields.List(fields.Str(), missing=[])
+    tag_id = fields.Str()
+    author_id = fields.Str()
 
     class Meta:
         strict = True
@@ -41,6 +51,8 @@ class BookPutSchema(BaseSchema):
 class BookQuerySchema(BaseSchema):
     page = fields.Int(missing=1)
     per_page = fields.Int(missing=10)
+    tag_id = fields.Str()
+    author_id = fields.Str()
     q = fields.Str()
 
     class Meta:
