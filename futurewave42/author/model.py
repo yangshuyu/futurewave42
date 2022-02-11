@@ -17,7 +17,7 @@ class Author(BaseModel):
 
     @property
     def cover(self):
-        return '{}{}'.format(load_config().CDN_DOMAIN, self.image)
+        return '{}{}'.format(load_config().CDN_DOMAIN, self.avatar)
 
     def update(self, **kwargs):
         try:
