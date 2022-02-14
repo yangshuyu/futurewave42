@@ -10,7 +10,7 @@ from libs.base.schema import BaseSchema
 class BookSchema(BaseSchema):
     id = fields.Str()
     name = fields.Str(required=True)
-    author = fields.Str(required=True)
+    author = fields.Str()
     language = fields.Str(required=True)
     image = fields.Str(required=True)
     title = fields.Str(required=True)
