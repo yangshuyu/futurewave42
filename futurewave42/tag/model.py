@@ -1,7 +1,9 @@
+import datetime
+
 from sqlalchemy import or_
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from futurewave42.ext import db
-from libs.base.model import BaseModel
+from libs.base.model import BaseModel, QueryWithSoftDelete
 from libs.error import dynamic_error
 
 
@@ -10,12 +12,19 @@ class Tag(BaseModel):
 
     name = db.Column(db.String(512), index=True, nullable=False)
     sub_id = db.Column(UUID)
+    deleted_at = db.Column(db.DateTime, index=True)
+
+    query_class = QueryWithSoftDelete
 
     @property
     def children(self):
         if not self.sub_id:
             return self.query.filter(Tag.sub_id == self.id).all()
         return None
+
+    def delete(self):
+        self.deleted_at = datetime.datetime.now()
+        db.session.commit()
 
     def update(self, **kwargs):
         sub_id = kwargs.get('sub_id')

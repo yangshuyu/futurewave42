@@ -20,8 +20,8 @@ class VideoSchema(BaseSchema):
     tag_id = fields.Str()
     author_id = fields.Str()
 
-    tag = fields.Nested(TagSchema)
-    new_author = fields.Nested(AuthorSchema)
+    tag = fields.Nested(TagSchema, dump_only=True)
+    new_author = fields.Nested(AuthorSchema, dump_only=True)
 
     class Meta:
         strict = True

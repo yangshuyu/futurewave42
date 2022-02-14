@@ -1,9 +1,11 @@
+import datetime
+
 from sqlalchemy import or_
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 
 from config import load_config
 from futurewave42.ext import db
-from libs.base.model import BaseModel
+from libs.base.model import BaseModel, QueryWithSoftDelete
 from libs.error import dynamic_error
 
 
@@ -14,10 +16,17 @@ class Author(BaseModel):
     e_name = db.Column(db.String(512), default='')
     c_name = db.Column(db.String(512), default='')
     introduction = db.Column(db.String)
+    deleted_at = db.Column(db.DateTime, index=True)
+
+    query_class = QueryWithSoftDelete
 
     @property
     def cover(self):
         return '{}{}'.format(load_config().CDN_DOMAIN, self.avatar)
+
+    def delete(self):
+        self.deleted_at = datetime.datetime.now()
+        db.session.commit()
 
     def update(self, **kwargs):
         try:

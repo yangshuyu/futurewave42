@@ -21,8 +21,8 @@ class BookSchema(BaseSchema):
     tag_id = fields.Str()
     author_id = fields.Str()
 
-    tag = fields.Nested(TagSchema)
-    new_author = fields.Nested(AuthorSchema)
+    tag = fields.Nested(TagSchema, dump_only=True)
+    new_author = fields.Nested(AuthorSchema, dump_only=True)
 
     cover = fields.Str(dump_only=True)
     detail_images = fields.List(fields.Str(), missing=[], dump_only=True)

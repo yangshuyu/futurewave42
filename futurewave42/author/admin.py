@@ -32,10 +32,10 @@ class AdminAuthorResource(BaseResource):
         data = AuthorSchema().dump(author).data
         return data
 
-    # @jwt_required
-    # def delete(self, book_id):
-    #     book = Book.find_by_id(book_id)
-    #     book.delete()
-    #     return {}, 204
+    @jwt_required
+    def delete(self, book_id):
+        author = Author.find_by_id(book_id)
+        author.delete()
+        return {}, 204
 
 

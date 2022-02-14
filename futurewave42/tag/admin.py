@@ -32,10 +32,10 @@ class AdminTagResource(BaseResource):
         data = TagSchema().dump(tag).data
         return data
 
-    # @jwt_required
-    # def delete(self, book_id):
-    #     book = Book.find_by_id(book_id)
-    #     book.delete()
-    #     return {}, 204
+    @jwt_required
+    def delete(self, book_id):
+        tag = Tag.find_by_id(book_id)
+        tag.delete()
+        return {}, 204
 
 

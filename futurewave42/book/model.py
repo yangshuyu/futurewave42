@@ -29,12 +29,12 @@ class Book(BaseModel):
     @property
     def tag(self):
         from futurewave42.tag.model import Tag
-        return Tag.query.filter(Tag.id == self.tag_id).first()
+        return db.session.query(Tag).filter(Tag.id == self.tag_id).first()
 
     @property
     def new_author(self):
         from futurewave42.author.model import Author
-        return Author.query.filter(Author.id == self.author_id).first()
+        return db.session.query(Author).filter(Author.id == self.author_id).first()
 
     @property
     def cover(self):
