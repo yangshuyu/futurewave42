@@ -68,7 +68,8 @@ class Author(BaseModel):
 
         if q:
             query = query.filter(or_(
-                cls.name.ilike("%{}%".format(q)),
+                cls.e_name.ilike("%{}%".format(q)),
+                cls.c_name.ilike("%{}%".format(q)),
             ))
 
         total = cls.get_count(query)

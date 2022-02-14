@@ -104,9 +104,13 @@ class Book(BaseModel):
         query = cls.query
 
         if q:
+            from futurewave42.author.model import Author
+            query = query.join(Author, Author.id == cls.author_id)
             query = query.filter(or_(
                 cls.name.ilike("%{}%".format(q)),
-                cls.title.ilike("%{}%".format(q))
+                cls.title.ilike("%{}%".format(q)),
+                Author.e_name.ilike("%{}%".format(q)),
+                Author.c_name.ilike("%{}%".format(q)),
 
             ))
 
