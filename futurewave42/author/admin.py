@@ -33,8 +33,8 @@ class AdminAuthorResource(BaseResource):
         return data
 
     @jwt_required
-    def delete(self, book_id):
-        author = Author.find_by_id(book_id)
+    def delete(self, author_id):
+        author = Author.find_by_id(author_id)
         author.delete()
         return {}, 204
 

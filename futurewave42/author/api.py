@@ -19,3 +19,9 @@ class AuthorsResource(BaseResource):
         return self.paginate(
             data, total, args.get('page', 1), args.get('per_page', 100))
 
+
+class AuthorResource(BaseResource):
+    def get(self, author_id):
+        author = Author.find_by_id(author_id)
+        data = AuthorSchema().dump(author).data
+        return data

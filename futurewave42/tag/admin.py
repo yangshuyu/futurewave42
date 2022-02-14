@@ -33,8 +33,8 @@ class AdminTagResource(BaseResource):
         return data
 
     @jwt_required
-    def delete(self, book_id):
-        tag = Tag.find_by_id(book_id)
+    def delete(self, tag_id):
+        tag = Tag.find_by_id(tag_id)
         tag.delete()
         return {}, 204
 
