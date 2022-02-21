@@ -1,3 +1,4 @@
+import json
 import os
 import time
 import zipfile
@@ -29,8 +30,9 @@ class BookResource(BaseResource):
 
 class BookDocsDownloadResource(BaseResource):
     @use_args(BookDocsDownloadSchema)
-    def post(self, args):
-        docs = args.get('docs', [])
+    def get(self, args):
+        docs = args.get('docs')
+        docs = json.loads(docs)
         memory_file = BytesIO()
         print("+++++++++++++++++++++++")
         with zipfile.ZipFile(memory_file, 'w') as zf:

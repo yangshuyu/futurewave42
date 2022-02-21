@@ -18,10 +18,10 @@ class BookSchema(BaseSchema):
     context = fields.Str(required=True)
     doc = fields.Str()
     docs = fields.List(fields.Str(), missing=[])
-    tag_id = fields.Str()
+    tag_ids = fields.Str()
     author_id = fields.Str()
 
-    tag = fields.Nested(TagSchema, dump_only=True)
+    tags = fields.List(fields.Nested(TagSchema), dump_only=True)
     new_author = fields.Nested(AuthorSchema, dump_only=True)
 
     cover = fields.Str(dump_only=True)
@@ -41,7 +41,7 @@ class BookPutSchema(BaseSchema):
     context = fields.Str()
     doc = fields.Str()
     docs = fields.List(fields.Str(), missing=[])
-    tag_id = fields.Str()
+    tag_ids = fields.List(fields.Str())
     author_id = fields.Str()
 
     class Meta:
@@ -60,7 +60,7 @@ class BookQuerySchema(BaseSchema):
 
 
 class BookDocsDownloadSchema(BaseSchema):
-    docs = fields.List(fields.Str(), missing=[])
+    docs = fields.Str()
 
     class Meta:
         strict = True

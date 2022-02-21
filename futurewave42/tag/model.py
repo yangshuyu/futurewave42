@@ -11,6 +11,7 @@ class Tag(BaseModel):
     __tablename__ = 'tags'
 
     name = db.Column(db.String(512), index=True, nullable=False)
+    type = db.Column(db.Integer, nullable=False, default=0, comment="0: book  1:video")
     sub_id = db.Column(UUID)
     deleted_at = db.Column(db.DateTime, index=True)
 
@@ -19,7 +20,8 @@ class Tag(BaseModel):
     @property
     def children(self):
         if not self.sub_id:
-            return self.query.filter(Tag.sub_id == self.id).all()
+            return self.query.filter(Tag.sub_id == self.id).\
+                filter(Tag.type == self.type).all()
         return None
 
     def delete(self):
@@ -51,6 +53,8 @@ class Tag(BaseModel):
     def add(cls, **kwargs):
         name = kwargs.get('name')
         sub_id = kwargs.get('sub_id', None)
+        t = kwargs.get('type', 0)
+
         old_tag = cls.query.filter(cls.name == name).first()
 
         if old_tag:
@@ -58,6 +62,7 @@ class Tag(BaseModel):
 
         tag = cls(
             name=kwargs.get('name'),
+            type=t,
         )
         if sub_id:
             tag.sub_id = sub_id
@@ -77,13 +82,17 @@ class Tag(BaseModel):
         page = kwargs.get('page')
         per_page = kwargs.get('per_page')
         q = kwargs.get('q')
-        query = cls.query.filter(cls.sub_id.is_(None))
+        t = kwargs.get('type', 0)
+
+        query = cls.query.filter(cls.sub_id.is_(None)).\
+            filter(cls.type == t)
 
         if q:
             query = query.filter(or_(
                 cls.name.ilike("%{}%".format(q)),
             ))
 
+        query = query.order_by(cls.created_at.desc())
         total = cls.get_count(query)
 
         if page and per_page:

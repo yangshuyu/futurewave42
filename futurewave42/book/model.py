@@ -25,11 +25,12 @@ class Book(BaseModel):
     docs = db.Column(JSONB, default=[])
     tag_id = db.Column(UUID)
     author_id = db.Column(UUID)
+    tag_ids = db.Column(JSONB, default=[])
 
     @property
-    def tag(self):
+    def tags(self):
         from futurewave42.tag.model import Tag
-        return db.session.query(Tag).filter(Tag.id == self.tag_id).first()
+        return db.session.query(Tag).filter(Tag.id.in_(self.tag_ids)).all()
 
     @property
     def new_author(self):
@@ -48,8 +49,9 @@ class Book(BaseModel):
         return data
 
     def update(self, **kwargs):
-        kwargs.pop("tag")
-        kwargs.pop("new_author")
+        kwargs.pop("tags", None)
+        kwargs.pop("tag", None)
+        kwargs.pop("new_author", None)
         try:
             for k, v in kwargs.items():
                 if hasattr(self, k):
@@ -60,6 +62,9 @@ class Book(BaseModel):
 
             if kwargs.get('docs', None):
                 flag_modified(self, 'docs')
+
+            if kwargs.get('tag_ids', None):
+                flag_modified(self, 'tag_ids')
 
             db.session.commit()
         except Exception as e:
@@ -80,7 +85,7 @@ class Book(BaseModel):
             context=kwargs.get('context'),
             doc=kwargs.get('doc', None),
             docs=kwargs.get('docs', []),
-            tag_id=kwargs.get('tag_id', None),
+            tag_ids=kwargs.get('tag_ids', None),
             author_id=kwargs.get('author_id', None)
         )
         db.session.add(book)
@@ -115,11 +120,11 @@ class Book(BaseModel):
             ))
 
         if tag_id:
-            query = query.filter(cls.tag_id == tag_id)
+            query = query.filter(cls.tag_ids.cast(JSONB).op("@>")([tag_id]))
 
         if author_id:
             query = query.filter(cls.author_id == author_id)
-
+        query = query.order_by(cls.created_at.desc())
         total = cls.get_count(query)
 
         if page and per_page:

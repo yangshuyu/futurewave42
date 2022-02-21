@@ -71,7 +71,7 @@ class Author(BaseModel):
                 cls.e_name.ilike("%{}%".format(q)),
                 cls.c_name.ilike("%{}%".format(q)),
             ))
-
+        query = query.order_by(cls.created_at.desc())
         total = cls.get_count(query)
 
         if page and per_page:

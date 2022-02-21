@@ -17,10 +17,10 @@ class VideoSchema(BaseSchema):
     doc = fields.Str()
     cover = fields.Str(dump_only=True)
 
-    tag_id = fields.Str()
+    tag_ids = fields.Str()
     author_id = fields.Str()
 
-    tag = fields.Nested(TagSchema, dump_only=True)
+    tags = fields.List(fields.Nested(TagSchema), dump_only=True)
     new_author = fields.Nested(AuthorSchema, dump_only=True)
 
     class Meta:
@@ -34,7 +34,7 @@ class VideoPutSchema(BaseSchema):
     video = fields.Str()
     context = fields.Str()
     doc = fields.Str()
-    tag_id = fields.Str()
+    tag_ids = fields.List(fields.Str())
     author_id = fields.Str()
 
     class Meta:
