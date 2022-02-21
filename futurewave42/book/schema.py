@@ -23,6 +23,7 @@ class BookSchema(BaseSchema):
 
     tags = fields.List(fields.Nested(TagSchema), dump_only=True)
     new_author = fields.Nested(AuthorSchema, dump_only=True)
+    origin_tags = fields.List(fields.List(fields.Str()))
 
     cover = fields.Str(dump_only=True)
     detail_images = fields.List(fields.Str(), missing=[], dump_only=True)
@@ -43,6 +44,7 @@ class BookPutSchema(BaseSchema):
     docs = fields.List(fields.Str(), missing=[])
     tag_ids = fields.List(fields.Str())
     author_id = fields.Str()
+    origin_tags = fields.List(fields.List(fields.Str()))
 
     class Meta:
         strict = True

@@ -11,7 +11,7 @@ class Tag(BaseModel):
     __tablename__ = 'tags'
 
     name = db.Column(db.String(512), index=True, nullable=False)
-    type = db.Column(db.Integer, nullable=False, default=0, comment="0: book  1:video")
+    type = db.Column(db.Integer, nullable=False, default=0, comment="0: book  1:video", server_default=0)
     sub_id = db.Column(UUID)
     deleted_at = db.Column(db.DateTime, index=True)
 

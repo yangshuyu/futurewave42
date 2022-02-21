@@ -26,6 +26,7 @@ class Book(BaseModel):
     tag_id = db.Column(UUID)
     author_id = db.Column(UUID)
     tag_ids = db.Column(JSONB, default=[])
+    origin_tags = db.Column(JSONB, default=[])
 
     @property
     def tags(self):
@@ -66,6 +67,9 @@ class Book(BaseModel):
             if kwargs.get('tag_ids', None):
                 flag_modified(self, 'tag_ids')
 
+            if kwargs.get('origin_tags', None):
+                flag_modified(self, 'origin_tags')
+
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -86,7 +90,8 @@ class Book(BaseModel):
             doc=kwargs.get('doc', None),
             docs=kwargs.get('docs', []),
             tag_ids=kwargs.get('tag_ids', None),
-            author_id=kwargs.get('author_id', None)
+            author_id=kwargs.get('author_id', None),
+            origin_tags=kwargs.get('origin_tags', [])
         )
         db.session.add(book)
 
