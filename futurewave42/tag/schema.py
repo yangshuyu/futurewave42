@@ -39,6 +39,7 @@ class TagQuerySchema(BaseSchema):
     page = fields.Int(missing=1)
     per_page = fields.Int(missing=100)
     q = fields.Str()
+    type = fields.Integer()
 
     class Meta:
         strict = True

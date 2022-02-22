@@ -24,17 +24,22 @@ class Video(BaseModel):
     tag_id = db.Column(UUID)
     author_id = db.Column(UUID)
     tag_ids = db.Column(JSONB, default=[])
+    author_ids = db.Column(JSONB, default=[])
     origin_tags = db.Column(JSONB, default=[])
 
     @property
     def tags(self):
         from futurewave42.tag.model import Tag
+        if not self.tag_ids:
+            return []
         return db.session.query(Tag).filter(Tag.id.in_(self.tag_ids)).all()
 
     @property
-    def new_author(self):
+    def new_authors(self):
         from futurewave42.author.model import Author
-        return db.session.query(Author).filter(Author.id == self.author_id).first()
+        if not self.author_ids:
+            return []
+        return db.session.query(Author).filter(Author.id.in_(self.author_ids)).all()
 
     @property
     def cover(self):
@@ -44,6 +49,7 @@ class Video(BaseModel):
         kwargs.pop("tags", None)
         kwargs.pop("tag", None)
         kwargs.pop("new_author", None)
+        kwargs.pop("new_authors", None)
 
         try:
             for k, v in kwargs.items():
@@ -52,6 +58,9 @@ class Video(BaseModel):
 
             if kwargs.get('tag_ids', None):
                 flag_modified(self, 'tag_ids')
+
+            if kwargs.get('author_ids', None):
+                flag_modified(self, 'author_ids')
 
             if kwargs.get('origin_tags', None):
                 flag_modified(self, 'origin_tags')
@@ -72,8 +81,8 @@ class Video(BaseModel):
             video=kwargs.get('video'),
             context=kwargs.get('context'),
             doc=kwargs.get('doc', None),
-            tag_ids=kwargs.get('tag_ids', None),
-            author_id=kwargs.get('author_id', None),
+            tag_ids=kwargs.get('tag_ids', []),
+            author_ids=kwargs.get('author_ids', []),
             origin_tags=kwargs.get('origin_tags', [])
         )
         db.session.add(video)
@@ -106,7 +115,7 @@ class Video(BaseModel):
             query = query.filter(cls.tag_ids.cast(JSONB).op("@>")([tag_id]))
 
         if author_id:
-            query = query.filter(cls.author_id == author_id)
+            query = query.filter(cls.author_id.cast(JSONB).op("@>")([author_id]))
         query = query.order_by(cls.created_at.desc())
         total = cls.get_count(query)
 
