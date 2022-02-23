@@ -39,9 +39,9 @@ class Book(BaseModel):
     @property
     def new_authors(self):
         from futurewave42.author.model import Author
-        if not self.author_ids:
+        if not self.tag_ids:
             return []
-        return db.session.query(Author).filter(Author.id.in_(self.author_ids)).all()
+        return db.session.query(Author).filter(Author.id.in_(self.author_ids)).first()
 
     @property
     def cover(self):
@@ -59,7 +59,6 @@ class Book(BaseModel):
         kwargs.pop("tag", None)
         kwargs.pop("new_author", None)
         kwargs.pop("new_authors", None)
-
         try:
             for k, v in kwargs.items():
                 if hasattr(self, k):
@@ -125,12 +124,10 @@ class Book(BaseModel):
 
         if q:
             from futurewave42.author.model import Author
-            query = query.join(Author, Author.id == cls.author_id)
+            # query = query.join(Author, Author.id == cls.author_id)
             query = query.filter(or_(
                 cls.name.ilike("%{}%".format(q)),
-                cls.title.ilike("%{}%".format(q)),
-                Author.e_name.ilike("%{}%".format(q)),
-                Author.c_name.ilike("%{}%".format(q)),
+                cls.title.ilike("%{}%".format(q))
 
             ))
 
@@ -138,7 +135,7 @@ class Book(BaseModel):
             query = query.filter(cls.tag_ids.cast(JSONB).op("@>")([tag_id]))
 
         if author_id:
-            query = query.filter(cls.author_id.cast(JSONB).op("@>")([author_id]))
+            query = query.filter(cls.author_ids.cast(JSONB).op("@>")([tag_id]))
         query = query.order_by(cls.created_at.desc())
         total = cls.get_count(query)
 
